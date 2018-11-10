@@ -4,4 +4,6 @@
     <string name="numberUser1">1</string>
     <string name="numberUser2">2</string>
     <string name="input_message">Ваше сообщение</string>
+    <string name="user_one_count">User1: %1$d</string>
+    <string name="user_two_count">User2: %1$d</string>
 </resources>
