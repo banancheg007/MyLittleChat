@@ -2,121 +2,109 @@ package mylittlechat.banancheg.com.mylittlechat
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.view.ContextMenu
+import android.support.v4.app.*
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
-import android.Manifest.permission_group.SMS
-import android.telecom.Call
-
+import android.widget.Button
+import android.widget.EditText
+import java.lang.NullPointerException
+import java.util.*
 
 class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
-
-
-    val TYPE_HEADER = 0
-    val TYPE_FIRST_USER_MESSAGE = 1
-    val TYPE_SECOND_USER_MESSAGE = 2
+    companion object {
+        const val TYPE_HEADER = 0
+        const val TYPE_FIRST_USER = 1
+        const val TYPE_SECOND_USER = 2
+    }
 
     private val messagesList: MutableList<UserMessage> = ArrayList()
-    private var firstUserMessageCounter: Int =0
-    private var secondUserMessageCounter: Int = 0
 
-
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layout: Int = getItemLayout(viewType)
-        val view: View = LayoutInflater.from(viewGroup.context).inflate(layout, viewGroup, false)
+    override fun onCreateViewHolder(parent  : ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         when(viewType){
-            TYPE_HEADER -> return HeaderViewHolder(view)
-            TYPE_SECOND_USER_MESSAGE or TYPE_FIRST_USER_MESSAGE -> return MessageViewHolder(view)
-            else -> throw IllegalArgumentException()
+            TYPE_HEADER ->{
+                return HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.header, parent, false)
+                )
+            }
+            TYPE_FIRST_USER ->{
+                return UserOneViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_user_one, parent, false)
+                )
+            }
+             TYPE_SECOND_USER ->{
+                 return UserTwoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_user_two, parent, false)
+                 )
+             }
+            else -> throw NullPointerException()
         }
 
     }
 
     override fun getItemCount(): Int {
-        return messagesList.size
-    }
-
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-        when(viewHolder.itemViewType){
-            TYPE_HEADER ->{
-                var viewHolder0: HeaderViewHolder = viewHolder  as HeaderViewHolder
-                viewHolder0.firstUserMessageCounter.setText(R.string.user_one_count)
-                viewHolder0.secondUserMessageCounter.setText(R.string.user_two_count)
-            }
-            TYPE_SECOND_USER_MESSAGE or TYPE_FIRST_USER_MESSAGE -> {
-                var viewHolder0: MessageViewHolder = viewHolder  as MessageViewHolder
-                viewHolder0.messageTextView.setText(messagesList.get(position).message)
-            }
-
-        }
-    }
-
-
-
-
-    fun getItemLayout(viewType: Int): Int {
-        when (viewType) {
-            TYPE_HEADER -> return R.layout.header
-            TYPE_FIRST_USER_MESSAGE -> return R.layout.message_user_one
-            TYPE_SECOND_USER_MESSAGE -> return R.layout.message_user_two
-        }
-        return R.layout.message_user_one
+        return messagesList.size + 1
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == 0){
-            return TYPE_HEADER
-        }
-        else if (messagesList.get(position) is UserOneMessage) {
-            return TYPE_FIRST_USER_MESSAGE
-        } else if (messagesList.get(position) is UserTwoMessage) {
-            return TYPE_SECOND_USER_MESSAGE
-        }
-        return -1
-    }
-
-    /*inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        fun bind(message: String?) {
-            itemView.findViewById<TextView>(R.id.messageTextView).text = message
-        }
-
-        fun bindHeader(firstUserMessageCounter: Int, secondUserMessageCounter: Int) {
-            itemView.findViewById<TextView>(R.id.count_user_one).text = firstUserMessageCounter.toString()
-            itemView.findViewById<TextView>(R.id.count_user_two).text = secondUserMessageCounter.toString()
-        }
-    }*/
-    inner class MessageViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-
-        var messageTextView: TextView
-
-        init {
-            messageTextView = v.findViewById(R.id.messageTextView)
+        return if (position == 0) TYPE_HEADER
+    else when(messagesList[position - 1].userName) {
+        "first" -> TYPE_FIRST_USER
+        "second" -> TYPE_SECOND_USER
+            else -> 5
         }
     }
 
-    inner class HeaderViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(holder){
+            is HeaderViewHolder -> {
+                holder.bind()
+            }
+            is UserOneViewHolder -> {
+                holder.bind(messagesList[position - 1])
+            }
+            is UserTwoViewHolder -> {
+                holder.bind(messagesList[position - 1])
+            }
 
-        var firstUserMessageCounter: TextView
-        var secondUserMessageCounter: TextView
-
-        init {
-            firstUserMessageCounter = v.findViewById(R.id.count_user_one)
-            secondUserMessageCounter = v.findViewById(R.id.count_user_two)
         }
     }
 
-    fun addView(message: UserMessage) {
+    fun addUserMessage(message: UserMessage) {
         messagesList.add(message)
         notifyItemChanged(0)
         notifyItemInserted(messagesList.size)
     }
 
+    inner class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
+        fun bind() {
+            var messagesUser1 = 0
+            var messagesUser2 = 0
+            messagesList.forEach { i ->
+                when (i.userName) {
+                    "first" -> messagesUser1++
+                    "second" -> messagesUser2++
+                }
+            }
+            txtMessage.text = "User1 : $messagesUser1   User2 : $messagesUser2"
+        }
+    }
+
+    open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+        private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
 
 
+        fun bind(message: UserMessage) {
+            txtMessage.text = message.text
+            lateinit var context:Context
+            //txtMessage.setBackgroundColor(ContextCompat.getColor(context,R.color.colorPrimaryDark))
+        }
+
+    }
+    inner class UserOneViewHolder(view: View) : MyAdapter.MyViewHolder(view)
+    inner class UserTwoViewHolder(view: View) : MyAdapter.MyViewHolder(view)
 
 }

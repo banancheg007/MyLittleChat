@@ -1,5 +1,3 @@
 package mylittlechat.banancheg.com.mylittlechat
 
-open class UserMessage{
-    var message: String? = null;
-}
+data class UserMessage(val userName: String, var text: String)
