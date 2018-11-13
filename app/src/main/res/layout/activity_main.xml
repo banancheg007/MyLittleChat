@@ -49,6 +49,7 @@
                     </RadioGroup>
         </LinearLayout>
         <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:background="@color/yellow"
                 android:layout_margin="16dp"
                 android:layout_width="match_parent"
