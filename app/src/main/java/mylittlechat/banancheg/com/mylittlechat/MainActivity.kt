@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 val checkedId = radioGroup.checkedRadioButtonId
                 if (checkedId == R.id.radioBtnUserOne) {
                     val userMessage = UserMessage("first", editTextMes)
+
                     myAdapter.addUserMessage(userMessage)
 
                 }

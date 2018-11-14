@@ -99,7 +99,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
         fun bind(message: UserMessage) {
             txtMessage.text = message.text
-            lateinit var context:Context
+
             //txtMessage.setBackgroundColor(ContextCompat.getColor(context,R.color.colorPrimaryDark))
         }
 
