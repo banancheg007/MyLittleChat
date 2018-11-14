@@ -12,5 +12,15 @@
                 android:textSize="20sp"
                 android:textColor="@android:color/white"
                 android:padding="20dp"/>
+        <EditText
+                android:visibility="gone"
+                android:id="@+id/messageEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/pink"
+                android:textSize="20sp"
+                android:inputType="text"
+                android:textColor="@android:color/white"
+                android:padding="20dp"/>
 
 </LinearLayout>

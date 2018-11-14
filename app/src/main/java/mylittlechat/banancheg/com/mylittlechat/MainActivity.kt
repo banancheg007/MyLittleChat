@@ -1,19 +1,12 @@
 package mylittlechat.banancheg.com.mylittlechat
 
-import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
-import android.support.v4.app.*
-import mylittlechat.banancheg.com.mylittlechat.R
 import kotlinx.android.synthetic.main.activity_main.*
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.DividerItemDecoration
-import android.widget.BaseAdapter
-import android.widget.ListView
-import mylittlechat.banancheg.com.mylittlechat.MyAdapter
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -29,8 +22,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         messagesView.layoutManager = LinearLayoutManager(this)
         messagesView.adapter = myAdapter
         messagesView.addItemDecoration(MyItemDecorator(20))
-        //val dividerDrawable: Drawable? = ContextCompat.getDrawable(this, R.drawable.divider_default)
-       // messagesView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL).apply { setDrawable(dividerDrawable!!) })
         buttonOk.setOnClickListener(this)
 
     }
