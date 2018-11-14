@@ -4,11 +4,13 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+
 
     var myAdapter: MyAdapter = MyAdapter();
 
@@ -46,6 +48,24 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+
+
+    override fun onContextItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId){
+            1 ->{
+                Log.d(TAG, "edit")
+            }
+            2 ->{
+                Log.d(TAG, "delete")
+            }
+            3 ->{
+                this.closeContextMenu()
+                Log.d(TAG, "close")
+            }
+        }
+        return true
     }
 
 

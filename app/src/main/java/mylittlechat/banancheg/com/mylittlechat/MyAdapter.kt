@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import java.lang.NullPointerException
 import java.util.*
+import android.view.MenuItem
 
 class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
@@ -91,10 +92,12 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view),View.OnCreateContextMenuListener {
         override fun onCreateContextMenu(myMenu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
             myMenu!!.setHeaderTitle(R.string.choose_option);
-            myMenu.add(0, 1, 0, "delete");
-            myMenu.add(0, 2, 0, "edit");
+            myMenu.add(0, 1, 0, "edit");
+            myMenu.add(0, 2, 0, "delete");
             myMenu.add(0, 3, 0, "close");
         }
+
+
 
 
         private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
@@ -102,7 +105,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
         fun bind(message: UserMessage) {
             txtMessage.text = message.text
-            itemView.setOnCreateContextMenuListener(this)
+            txtMessage.setOnCreateContextMenuListener(this)
             //txtMessage.setBackgroundColor(ContextCompat.getColor(context,R.color.colorPrimaryDark))
         }
 
