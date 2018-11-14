@@ -1,10 +1,9 @@
 package mylittlechat.banancheg.com.mylittlechat
 
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
+import java.lang.IllegalArgumentException
 import java.lang.NullPointerException
 import java.util.*
 
@@ -32,7 +31,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                  return UserTwoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_user_two, parent, false)
                  )
              }
-            else -> throw NullPointerException()
+            else -> throw IllegalArgumentException()
         }
 
     }
@@ -87,7 +86,51 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         }
     }
 
-    open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
+        val messageText: TextView
+
+
+        private val onEditMenu = MenuItem.OnMenuItemClickListener { menuItem ->
+            val position = adapterPosition
+
+            when (menuItem.itemId) {
+                1 -> {}
+                    2 -> deleteItem(position-1)
+                3 -> {
+                }
+            }
+            true
+        }
+
+        init {
+            messageText = itemView.findViewById(R.id.messageTextView)
+            itemView.setOnCreateContextMenuListener(this)
+        }
+
+        override fun onCreateContextMenu(
+            contextMenu: ContextMenu,
+            view: View,
+            contextMenuInfo: ContextMenu.ContextMenuInfo?
+        ) {
+            val Edit = contextMenu.add(Menu.NONE, 1, 1, "Edit")
+            val Delete = contextMenu.add(Menu.NONE, 2, 2, "Delete")
+            val Close = contextMenu.add(Menu.NONE, 3, 3, "Close")
+            Edit.setOnMenuItemClickListener(onEditMenu)
+            Delete.setOnMenuItemClickListener(onEditMenu)
+            Close.setOnMenuItemClickListener(onEditMenu)
+        }
+
+        private fun deleteItem(position: Int) {
+            messagesList.removeAt(position)
+            notifyItemChanged(0)
+            notifyItemRemoved(position+1)
+        }
+
+
+
+
+
+
 
         private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
 
