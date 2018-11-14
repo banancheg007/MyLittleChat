@@ -48,7 +48,10 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) TYPE_HEADER
+        return if (position == 0) {TYPE_HEADER}
+        else if (position == editPosition?.let { it + 1 }) {
+            return TYPE_EDIT
+        }
     else when(messagesList[position - 1].userName) {
         "first" -> TYPE_FIRST_USER
         "second" -> TYPE_SECOND_USER

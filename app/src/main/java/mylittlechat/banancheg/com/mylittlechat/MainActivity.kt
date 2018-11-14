@@ -52,23 +52,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
 
-    override fun onContextItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId){
-            1 ->{
-                Log.d(TAG, "edit")
-
-            }
-            2 ->{
-                Log.d(TAG, "delete")
-                myAdapter.deleteMessage(myAdapter.currentAdapterPosition - 1)
-            }
-            3 ->{
-                this.closeContextMenu()
-                Log.d(TAG, "close")
-            }
-        }
-        return true
-    }
-
 
 }
