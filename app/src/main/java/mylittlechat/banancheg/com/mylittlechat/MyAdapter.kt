@@ -1,9 +1,9 @@
 package mylittlechat.banancheg.com.mylittlechat
 
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import java.lang.NullPointerException
 import java.util.*
@@ -14,9 +14,11 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         const val TYPE_HEADER = 0
         const val TYPE_FIRST_USER = 1
         const val TYPE_SECOND_USER = 2
+        const val TYPE_EDIT = 3
     }
 
     private val messagesList: MutableList<UserMessage> = ArrayList()
+    private var editPosition: Int? = null
 
     override fun onCreateViewHolder(parent  : ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         when(viewType){
@@ -32,6 +34,10 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                  return UserTwoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.message_user_two, parent, false)
                  )
              }
+             TYPE_EDIT ->{
+                return EditViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.edit_message, parent, false)
+             )
+        }
             else -> throw NullPointerException()
         }
 
@@ -61,6 +67,9 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             is UserTwoViewHolder -> {
                 holder.bind(messagesList[position - 1])
             }
+            is EditViewHolder -> {
+                holder.bind(messagesList[position - 1])
+            }
 
         }
     }
@@ -87,7 +96,67 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         }
     }
 
-    open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    fun startEdit(position: Int) {
+        val prevEditPosition = editPosition
+        editPosition = position
+        prevEditPosition?.let { notifyItemChanged(it + 1) }
+        notifyItemChanged(position + 1)
+    }
+
+    fun endEdit(newText: String) {
+        editPosition?.let{
+            messagesList[it].text = newText
+            notifyItemChanged(it + 1)
+        }
+        editPosition = null
+    }
+
+    open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
+        val messageText: TextView
+
+
+        private val onEditMenu = MenuItem.OnMenuItemClickListener { menuItem ->
+            val position = adapterPosition
+
+            when (menuItem.itemId) {
+                1 -> {startEdit(position-1)}
+                    2 -> deleteItem(position-1)
+                3 -> {
+                }
+            }
+            true
+        }
+
+        init {
+            messageText = itemView.findViewById(R.id.messageTextView)
+
+            itemView.setOnCreateContextMenuListener(this)
+        }
+
+        override fun onCreateContextMenu(
+            contextMenu: ContextMenu,
+            view: View,
+            contextMenuInfo: ContextMenu.ContextMenuInfo?
+        ) {
+            val Edit = contextMenu.add(Menu.NONE, 1, 1, "Edit")
+            val Delete = contextMenu.add(Menu.NONE, 2, 2, "Delete")
+            val Close = contextMenu.add(Menu.NONE, 3, 3, "Close")
+            Edit.setOnMenuItemClickListener(onEditMenu)
+            Delete.setOnMenuItemClickListener(onEditMenu)
+            Close.setOnMenuItemClickListener(onEditMenu)
+        }
+
+        private fun deleteItem(position: Int) {
+            messagesList.removeAt(position)
+            notifyItemChanged(0)
+            notifyItemRemoved(position+1)
+        }
+
+
+
+
+
+
 
         private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
 
@@ -101,5 +170,24 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     }
     inner class UserOneViewHolder(view: View) : MyAdapter.MyViewHolder(view)
     inner class UserTwoViewHolder(view: View) : MyAdapter.MyViewHolder(view)
+
+    inner class EditViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+
+        private val editMessage: EditText = view.findViewById(R.id.edit_message)
+        private val buttonOk: Button = view.findViewById(R.id.btn_ok)
+
+        init {
+            buttonOk.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            endEdit(editMessage.text.toString())
+        }
+
+        fun bind(message: UserMessage) {
+            editMessage.setText(message.text)
+        }
+
+    }
 
 }
