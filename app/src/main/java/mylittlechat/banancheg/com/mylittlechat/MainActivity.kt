@@ -56,9 +56,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         when(item?.itemId){
             1 ->{
                 Log.d(TAG, "edit")
+
             }
             2 ->{
                 Log.d(TAG, "delete")
+                myAdapter.deleteMessage(myAdapter.currentAdapterPosition - 1)
             }
             3 ->{
                 this.closeContextMenu()

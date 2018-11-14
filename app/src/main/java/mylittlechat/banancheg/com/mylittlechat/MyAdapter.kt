@@ -1,5 +1,6 @@
 package mylittlechat.banancheg.com.mylittlechat
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.ContextMenu
 import android.view.LayoutInflater
@@ -17,8 +18,10 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         const val TYPE_FIRST_USER = 1
         const val TYPE_SECOND_USER = 2
     }
-
+    lateinit var messageTextView : TextView
+    lateinit var context: Context
     private val messagesList: MutableList<UserMessage> = ArrayList()
+     var currentAdapterPosition: Int = 0
 
     override fun onCreateViewHolder(parent  : ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         when(viewType){
@@ -73,6 +76,16 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         notifyItemInserted(messagesList.size)
     }
 
+    fun editMessage(position: Int){
+       
+    }
+
+    fun deleteMessage(position: Int) {
+        messagesList.removeAt(position)
+        notifyItemChanged(0)
+        notifyItemRemoved(position + 1)
+    }
+
     inner class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
@@ -95,12 +108,15 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             myMenu.add(0, 1, 0, "edit");
             myMenu.add(0, 2, 0, "delete");
             myMenu.add(0, 3, 0, "close");
+            currentAdapterPosition = adapterPosition
+            context = txtMessage.context
+
         }
 
 
 
 
-        private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
+         val txtMessage: TextView = view.findViewById(R.id.messageTextView)
 
 
         fun bind(message: UserMessage) {
