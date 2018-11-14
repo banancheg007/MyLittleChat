@@ -1,6 +1,7 @@
 package mylittlechat.banancheg.com.mylittlechat
 
 import android.support.v7.widget.RecyclerView
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,14 +88,21 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         }
     }
 
-    open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view),View.OnCreateContextMenuListener {
+        override fun onCreateContextMenu(myMenu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+            myMenu!!.setHeaderTitle(R.string.choose_option);
+            myMenu.add(0, 1, 0, "delete");
+            myMenu.add(0, 2, 0, "edit");
+            myMenu.add(0, 3, 0, "close");
+        }
+
 
         private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
 
 
         fun bind(message: UserMessage) {
             txtMessage.text = message.text
-
+            itemView.setOnCreateContextMenuListener(this)
             //txtMessage.setBackgroundColor(ContextCompat.getColor(context,R.color.colorPrimaryDark))
         }
 
