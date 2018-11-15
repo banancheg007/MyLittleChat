@@ -6,6 +6,8 @@ import android.widget.EditText
 import android.widget.TextView
 import java.lang.NullPointerException
 import java.util.*
+import android.view.inputmethod.EditorInfo
+
 
 class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
@@ -34,8 +36,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                  )
              }
              TYPE_EDIT ->{
-                return EditViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.edit_message, parent, false)
-             )
+                return EditViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.edit_message, parent, false))
         }
             else -> throw NullPointerException()
         }
@@ -45,6 +46,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun getItemCount(): Int {
         return messagesList.size + 1
     }
+
 
     override fun getItemViewType(position: Int): Int {
         return if (position == 0) {TYPE_HEADER}
@@ -70,6 +72,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                 holder.bind(messagesList[position - 1])
             }
             is EditViewHolder -> {
+
                 holder.bind(messagesList[position - 1])
             }
 
@@ -99,10 +102,12 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     }
 
     fun startEdit(position: Int) {
+
         val prevEditPosition = editPosition
         editPosition = position
         prevEditPosition?.let { notifyItemChanged(it + 1) }
         notifyItemChanged(position + 1)
+
     }
 
     fun endEdit(newText: String) {
@@ -121,7 +126,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             val position = adapterPosition
 
             when (menuItem.itemId) {
-                1 -> {startEdit(position-1)}
+                1 -> { startEdit(position-1)}
                     2 -> deleteItem(position-1)
                 3 -> {
                 }
@@ -148,6 +153,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             Close.setOnMenuItemClickListener(onEditMenu)
         }
 
+
         private fun deleteItem(position: Int) {
             messagesList.removeAt(position)
             notifyItemChanged(0)
@@ -166,31 +172,39 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         fun bind(message: UserMessage) {
             txtMessage.text = message.text
 
-            //txtMessage.setBackgroundColor(ContextCompat.getColor(context,R.color.colorPrimaryDark))
+
         }
 
     }
     inner class UserOneViewHolder(view: View) : MyAdapter.MyViewHolder(view)
     inner class UserTwoViewHolder(view: View) : MyAdapter.MyViewHolder(view)
 
-    inner class EditViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnFocusChangeListener {
-        override fun onFocusChange(v: View?, hasFocus: Boolean) {
-            if (!v!!.hasFocus()){
-                endEdit(editMessage.text.toString())
-            }
-        }
+    inner class EditViewHolder(view: View) : RecyclerView.ViewHolder(view){
+
+
+
 
         private val editMessage: EditText = view.findViewById(R.id.edit_message)
 
         init {
-            editMessage.setOnFocusChangeListener(this)
-            editMessage.requestFocus()
+            editMessage.setOnEditorActionListener() { v, actionId, event ->
+                if(actionId == EditorInfo.IME_ACTION_DONE){
+                    v.requestFocus()
+                    endEdit(editMessage.text.toString())
+                    true
+                } else {
+                    false
+                }
+
+            }
         }
+
 
 
 
         fun bind(message: UserMessage) {
             editMessage.setText(message.text)
+            editMessage.requestFocus()
         }
 
     }
