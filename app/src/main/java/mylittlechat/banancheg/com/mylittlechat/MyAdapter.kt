@@ -2,7 +2,6 @@ package mylittlechat.banancheg.com.mylittlechat
 
 import android.support.v7.widget.RecyclerView
 import android.view.*
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import java.lang.NullPointerException
@@ -115,7 +114,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     }
 
     open inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
-        val messageText: TextView
+        private val messageText: TextView
 
 
         private val onEditMenu = MenuItem.OnMenuItemClickListener { menuItem ->
@@ -174,18 +173,21 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     inner class UserOneViewHolder(view: View) : MyAdapter.MyViewHolder(view)
     inner class UserTwoViewHolder(view: View) : MyAdapter.MyViewHolder(view)
 
-    inner class EditViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    inner class EditViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnFocusChangeListener {
+        override fun onFocusChange(v: View?, hasFocus: Boolean) {
+            if (!v!!.hasFocus()){
+                endEdit(editMessage.text.toString())
+            }
+        }
 
         private val editMessage: EditText = view.findViewById(R.id.edit_message)
-        private val buttonOk: Button = view.findViewById(R.id.btn_ok)
 
         init {
-            buttonOk.setOnClickListener(this)
+            editMessage.setOnFocusChangeListener(this)
+            editMessage.requestFocus()
         }
 
-        override fun onClick(v: View?) {
-            endEdit(editMessage.text.toString())
-        }
+
 
         fun bind(message: UserMessage) {
             editMessage.setText(message.text)

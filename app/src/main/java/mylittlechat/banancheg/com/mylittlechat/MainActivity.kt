@@ -4,12 +4,17 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener,View.OnFocusChangeListener {
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+        if(!v!!.hasFocus()){
+            editText.setText("")
+        }
+    }
 
 
     var myAdapter: MyAdapter = MyAdapter();
@@ -25,6 +30,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         messagesView.adapter = myAdapter
         messagesView.addItemDecoration(MyItemDecorator(20))
         buttonOk.setOnClickListener(this)
+        editText.setOnFocusChangeListener(this)
 
     }
 
@@ -32,6 +38,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         when (v?.id) {
             R.id.buttonOk -> {
                 Log.d(TAG, "on ok clicked")
+                if(editText.text.isEmpty()){
+                    Toast.makeText(this, "Введите сообщение", Toast.LENGTH_LONG).show();
+                    return
+                }
                 val editTextMes = editText.text.toString()
                 val checkedId = radioGroup.checkedRadioButtonId
                 if (checkedId == R.id.radioBtnUserOne) {
@@ -46,6 +56,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
                 }
+                editText.setText("")
             }
         }
     }
