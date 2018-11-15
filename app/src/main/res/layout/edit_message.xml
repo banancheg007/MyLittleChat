@@ -10,7 +10,8 @@
             android:id="@+id/edit_message"
             android:focusableInTouchMode="true"
             android:descendantFocusability="beforeDescendants"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:imeOptions="actionDone">
     </EditText>
 
 

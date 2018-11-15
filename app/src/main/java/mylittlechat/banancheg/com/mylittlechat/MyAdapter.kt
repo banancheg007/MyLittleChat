@@ -6,6 +6,11 @@ import android.widget.EditText
 import android.widget.TextView
 import java.lang.NullPointerException
 import java.util.*
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView.OnEditorActionListener
+import android.R.attr.password
+import org.w3c.dom.Text
+
 
 class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
@@ -18,6 +23,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     private val messagesList: MutableList<UserMessage> = ArrayList()
     private var editPosition: Int? = null
+    lateinit  var editViewHolder :EditViewHolder
 
     override fun onCreateViewHolder(parent  : ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         when(viewType){
@@ -34,8 +40,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                  )
              }
              TYPE_EDIT ->{
-                return EditViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.edit_message, parent, false)
-             )
+                return EditViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.edit_message, parent, false))
         }
             else -> throw NullPointerException()
         }
@@ -45,6 +50,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     override fun getItemCount(): Int {
         return messagesList.size + 1
     }
+
 
     override fun getItemViewType(position: Int): Int {
         return if (position == 0) {TYPE_HEADER}
@@ -70,6 +76,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                 holder.bind(messagesList[position - 1])
             }
             is EditViewHolder -> {
+                editViewHolder = holder
                 holder.bind(messagesList[position - 1])
             }
 
@@ -99,10 +106,12 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     }
 
     fun startEdit(position: Int) {
+
         val prevEditPosition = editPosition
         editPosition = position
         prevEditPosition?.let { notifyItemChanged(it + 1) }
         notifyItemChanged(position + 1)
+        //editViewHolder.getEditText().requestFocus()
     }
 
     fun endEdit(newText: String) {
@@ -121,7 +130,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             val position = adapterPosition
 
             when (menuItem.itemId) {
-                1 -> {startEdit(position-1)}
+                1 -> { startEdit(position-1)}
                     2 -> deleteItem(position-1)
                 3 -> {
                 }
@@ -147,6 +156,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             Delete.setOnMenuItemClickListener(onEditMenu)
             Close.setOnMenuItemClickListener(onEditMenu)
         }
+
 
         private fun deleteItem(position: Int) {
             messagesList.removeAt(position)
@@ -176,21 +186,39 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     inner class EditViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnFocusChangeListener {
         override fun onFocusChange(v: View?, hasFocus: Boolean) {
             if (!v!!.hasFocus()){
-                endEdit(editMessage.text.toString())
+                //endEdit(editMessage.text.toString())
             }
         }
+
+
 
         private val editMessage: EditText = view.findViewById(R.id.edit_message)
 
         init {
             editMessage.setOnFocusChangeListener(this)
-            editMessage.requestFocus()
+            //editMessage.requestFocus()
+
+            editMessage.setOnEditorActionListener() { v, actionId, event ->
+                if(actionId == EditorInfo.IME_ACTION_DONE){
+                    v.requestFocus()
+                    endEdit(editMessage.text.toString())
+                    true
+                } else {
+                    false
+                }
+
+            }
+        }
+
+        fun getEditText(): TextView{
+            return editMessage
         }
 
 
 
         fun bind(message: UserMessage) {
             editMessage.setText(message.text)
+            editMessage.requestFocus()
         }
 
     }
