@@ -7,9 +7,6 @@ import android.widget.TextView
 import java.lang.NullPointerException
 import java.util.*
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView.OnEditorActionListener
-import android.R.attr.password
-import org.w3c.dom.Text
 
 
 class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
@@ -23,7 +20,6 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     private val messagesList: MutableList<UserMessage> = ArrayList()
     private var editPosition: Int? = null
-    lateinit  var editViewHolder :EditViewHolder
 
     override fun onCreateViewHolder(parent  : ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         when(viewType){
@@ -76,7 +72,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
                 holder.bind(messagesList[position - 1])
             }
             is EditViewHolder -> {
-                editViewHolder = holder
+
                 holder.bind(messagesList[position - 1])
             }
 
@@ -111,7 +107,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         editPosition = position
         prevEditPosition?.let { notifyItemChanged(it + 1) }
         notifyItemChanged(position + 1)
-        //editViewHolder.getEditText().requestFocus()
+
     }
 
     fun endEdit(newText: String) {
@@ -176,28 +172,21 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         fun bind(message: UserMessage) {
             txtMessage.text = message.text
 
-            //txtMessage.setBackgroundColor(ContextCompat.getColor(context,R.color.colorPrimaryDark))
+
         }
 
     }
     inner class UserOneViewHolder(view: View) : MyAdapter.MyViewHolder(view)
     inner class UserTwoViewHolder(view: View) : MyAdapter.MyViewHolder(view)
 
-    inner class EditViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnFocusChangeListener {
-        override fun onFocusChange(v: View?, hasFocus: Boolean) {
-            if (!v!!.hasFocus()){
-                //endEdit(editMessage.text.toString())
-            }
-        }
+    inner class EditViewHolder(view: View) : RecyclerView.ViewHolder(view){
+
 
 
 
         private val editMessage: EditText = view.findViewById(R.id.edit_message)
 
         init {
-            editMessage.setOnFocusChangeListener(this)
-            //editMessage.requestFocus()
-
             editMessage.setOnEditorActionListener() { v, actionId, event ->
                 if(actionId == EditorInfo.IME_ACTION_DONE){
                     v.requestFocus()
@@ -210,9 +199,6 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             }
         }
 
-        fun getEditText(): TextView{
-            return editMessage
-        }
 
 
 
