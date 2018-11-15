@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">My Little Chat</string>
+    <string name="OK">OK</string>
+    <string name="numberUser1">1</string>
+    <string name="numberUser2">2</string>
+    <string name="input_message">Ваше сообщение</string>
+    <string name="choose_option">Выберите действие</string>
 </resources>
