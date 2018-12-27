@@ -18,7 +18,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         const val TYPE_EDIT = 3
     }
 
-    private val messagesList: MutableList<UserMessage> = ArrayList()
+    private var messagesList: MutableList<UserMessage> = ArrayList()
     private var editPosition: Int? = null
 
     override fun onCreateViewHolder(parent  : ViewGroup, viewType: Int): RecyclerView.ViewHolder{
@@ -207,6 +207,11 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             editMessage.requestFocus()
         }
 
+    }
+
+    fun setAdapter(messages: List<UserMessage>) {
+        this.messagesList = messages as ArrayList<UserMessage>
+        notifyDataSetChanged()
     }
 
 }

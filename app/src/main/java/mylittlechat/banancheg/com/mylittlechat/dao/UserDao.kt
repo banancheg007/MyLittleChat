@@ -9,7 +9,7 @@ import mylittlechat.banancheg.com.mylittlechat.User
 @Dao
 interface UserDao {
 
-    @get:Query("SELECT * FROM user_table ORDER BY id DESC")
+    @get:Query("SELECT * FROM user_table")
     val allUsers: LiveData<List<User>>
 
     @Insert

@@ -6,11 +6,16 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import mylittlechat.banancheg.com.mylittlechat.viewmodel.UserMessageViewModel
+import mylittlechat.banancheg.com.mylittlechat.viewmodel.ViewModelFactory
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,View.OnFocusChangeListener {
+    private var userMessageViewModel: UserMessageViewModel? = null
     override fun onFocusChange(v: View?, hasFocus: Boolean) {
         if(!v!!.hasFocus()){
             editText.setText("")
@@ -32,7 +37,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,View.OnFocusChang
         messagesView.addItemDecoration(MyItemDecorator(20))
         buttonOk.setOnClickListener(this)
         editText.setOnFocusChangeListener(this)
+        userMessageViewModel = ViewModelProviders.of(this, ViewModelFactory(application)).get(UserMessageViewModel::class.java)
 
+        userMessageViewModel!!.getAllMessages().observe(this, Observer { message ->
+            myAdapter.setAdapter(message)
+        })
     }
 
     override fun onClick(v: View?) {
@@ -48,13 +57,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,View.OnFocusChang
                 if (checkedId == R.id.radioBtnUserOne) {
                     val userMessage = UserMessage(0, editTextMes)
 
-                    myAdapter.addUserMessage(userMessage)
+                    //myAdapter.addUserMessage(userMessage)
+                    userMessageViewModel!!.insert(userMessage)
 
                 }
                 if (checkedId == R.id.radioBtnUserTwo) {
                     val userMessage = UserMessage(1, editTextMes)
-                    myAdapter.addUserMessage(userMessage)
-
+                    //myAdapter.addUserMessage(userMessage)
+                    userMessageViewModel!!.insert(userMessage)
 
                 }
                 editText.setText("")
