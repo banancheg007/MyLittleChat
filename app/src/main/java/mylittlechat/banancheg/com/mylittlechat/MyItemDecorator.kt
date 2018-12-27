@@ -1,8 +1,8 @@
 package mylittlechat.banancheg.com.mylittlechat
 
 import android.graphics.Rect
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
 class MyItemDecorator(var space: Int): RecyclerView.ItemDecoration() {
     fun MyItemDecorator(space: Int)

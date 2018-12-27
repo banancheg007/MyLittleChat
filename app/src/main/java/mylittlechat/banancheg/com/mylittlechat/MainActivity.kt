@@ -1,11 +1,12 @@
 package mylittlechat.banancheg.com.mylittlechat
 
-import android.support.v7.app.AppCompatActivity
+
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -45,13 +46,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,View.OnFocusChang
                 val editTextMes = editText.text.toString()
                 val checkedId = radioGroup.checkedRadioButtonId
                 if (checkedId == R.id.radioBtnUserOne) {
-                    val userMessage = UserMessage("first", editTextMes)
+                    val userMessage = UserMessage(0, editTextMes)
 
                     myAdapter.addUserMessage(userMessage)
 
                 }
                 if (checkedId == R.id.radioBtnUserTwo) {
-                    val userMessage = UserMessage("second", editTextMes)
+                    val userMessage = UserMessage(1, editTextMes)
                     myAdapter.addUserMessage(userMessage)
 
 

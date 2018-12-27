@@ -1,12 +1,12 @@
 package mylittlechat.banancheg.com.mylittlechat
 
-import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.widget.EditText
 import android.widget.TextView
 import java.lang.NullPointerException
 import java.util.*
 import android.view.inputmethod.EditorInfo
+import androidx.recyclerview.widget.RecyclerView
 
 
 class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
@@ -53,9 +53,9 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
         else if (position == editPosition?.let { it + 1 }) {
             return TYPE_EDIT
         }
-    else when(messagesList[position - 1].userName) {
-        "first" -> TYPE_FIRST_USER
-        "second" -> TYPE_SECOND_USER
+    else when(messagesList[position - 1].userId) {
+        0 -> TYPE_FIRST_USER
+        1 -> TYPE_SECOND_USER
             else -> 5
         }
     }
@@ -92,9 +92,9 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             var messagesUser1 = 0
             var messagesUser2 = 0
             messagesList.forEach { i ->
-                when (i.userName) {
-                    "first" -> messagesUser1++
-                    "second" -> messagesUser2++
+                when (i.userId) {
+                    0 -> messagesUser1++
+                    1-> messagesUser2++
                 }
             }
             txtMessage.text = "User1 : $messagesUser1   User2 : $messagesUser2"
