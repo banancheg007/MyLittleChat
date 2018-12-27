@@ -181,7 +181,7 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
 
         private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
-
+        private val editMessage: EditText = view.findViewById(R.id.edit_message)
 
         fun bind(message: UserMessage) {
             txtMessage.text = message.text
