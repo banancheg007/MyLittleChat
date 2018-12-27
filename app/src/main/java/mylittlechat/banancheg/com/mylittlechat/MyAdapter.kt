@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
-
+    private var listener: OnItemClickListener? = null
     companion object {
         const val TYPE_HEADER = 0
         const val TYPE_FIRST_USER = 1
@@ -20,6 +20,12 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     private var messagesList: MutableList<UserMessage> = ArrayList()
     private var editPosition: Int? = null
+    interface OnItemClickListener {
+        fun onItemClick(message: UserMessage, view: View)
+    }
+    fun setOnItenClickListener(listener: OnItemClickListener) {
+        this.listener = listener
+    }
 
     override fun onCreateViewHolder(parent  : ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         when(viewType){
@@ -138,6 +144,14 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
             messageText = itemView.findViewById(R.id.messageTextView)
 
             itemView.setOnCreateContextMenuListener(this)
+
+            view.setOnClickListener {
+                val position = adapterPosition
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener!!.onItemClick(messagesList[position-1], view)
+                }
+
+            }
         }
 
         override fun onCreateContextMenu(

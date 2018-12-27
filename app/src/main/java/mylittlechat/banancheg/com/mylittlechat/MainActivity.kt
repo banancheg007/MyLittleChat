@@ -2,8 +2,14 @@ package mylittlechat.banancheg.com.mylittlechat
 
 
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.PopupMenu
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -42,6 +48,39 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,View.OnFocusChang
         userMessageViewModel!!.getAllMessages().observe(this, Observer { message ->
             myAdapter.setAdapter(message)
         })
+        myAdapter.setOnItenClickListener(object : MyAdapter.OnItemClickListener {
+            override fun onItemClick(message: UserMessage, view: View) {
+                showPopupMenu(view, message)
+            }
+        })
+    }
+    private fun showPopupMenu(view: View, message: UserMessage) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.inflate(R.menu.popupmenu)
+
+        popupMenu
+            .setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+                override fun onMenuItemClick(item: MenuItem): Boolean {
+                    when (item.itemId) {
+                        R.id.delete -> {
+                            userMessageViewModel!!.delete(message)
+                            return true
+                        }
+                        R.id.edit -> {
+
+
+                            return true
+                        }
+                        R.id.close -> {
+                            return true
+                        }
+                        else -> return false
+                    }
+                }
+            })
+        popupMenu.setOnDismissListener {
+        }
+        popupMenu.show()
     }
 
     override fun onClick(v: View?) {
