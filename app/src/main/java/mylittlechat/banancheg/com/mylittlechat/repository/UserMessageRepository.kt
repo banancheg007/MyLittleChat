@@ -7,7 +7,7 @@ import mylittlechat.banancheg.com.mylittlechat.UserMessage
 import mylittlechat.banancheg.com.mylittlechat.dao.UserMessageDao
 import mylittlechat.banancheg.com.mylittlechat.database.ChatDatabase
 
-class MessageRepository(application: Application){
+class UserMessageRepository(application: Application){
     private val messageDao: UserMessageDao
     private val allMessages: LiveData<List<UserMessage>>
 

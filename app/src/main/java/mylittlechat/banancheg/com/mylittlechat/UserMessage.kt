@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "message_table")
 class UserMessage(
     @field:ColumnInfo(name = "user_id")
-    val userId: Int,
+    var userId: Int,
 
     @field:ColumnInfo(name = "text")
     var text: String) {
