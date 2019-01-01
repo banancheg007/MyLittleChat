@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,View.OnFocusChang
 
 
     companion object {
-        val TAG = MainActivity::class.java.simpleName
+       // val TAG = MainActivity::class.java.simpleName
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

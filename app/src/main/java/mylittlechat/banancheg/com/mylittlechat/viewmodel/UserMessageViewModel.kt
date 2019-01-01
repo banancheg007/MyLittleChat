@@ -2,6 +2,7 @@ package mylittlechat.banancheg.com.mylittlechat.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.provider.SyncStateContract.Helpers.update
 import android.text.InputType
 import android.view.MenuItem
 import android.view.View
@@ -20,6 +21,9 @@ import mylittlechat.banancheg.com.mylittlechat.R.id.editText
 import mylittlechat.banancheg.com.mylittlechat.UserMessage
 
 import mylittlechat.banancheg.com.mylittlechat.repository.UserMessageRepository
+import android.view.View.OnFocusChangeListener
+
+
 
 
 
@@ -27,7 +31,9 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
 
     private val repository: UserMessageRepository = UserMessageRepository(application)
     private var allMessages: LiveData<List<UserMessage>>
-    var myAdapter: MyAdapter = MyAdapter();
+    var myAdapter: MyAdapter = MyAdapter()
+    private lateinit var mTextView: TextView
+    private lateinit var mEditText: EditText
 
 
     lateinit var context: Context
@@ -36,6 +42,7 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
         allMessages = repository.getAllMessages()
         myAdapter.setOnItenClickListener(object : MyAdapter.OnItemClickListener {
             override fun onItemClick(message: UserMessage, view: View) {
+                view.requestFocus()
                 showPopupMenu(view, message)
             }
         })
@@ -45,10 +52,10 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
     private fun showPopupMenu(view: View, message: UserMessage) {
         val popupMenu = PopupMenu(getApplication(), view)
         popupMenu.inflate(R.menu.popupmenu)
-
         popupMenu
             .setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
                 override fun onMenuItemClick(item: MenuItem): Boolean {
+                    //view.requestFocus()
                     when (item.itemId) {
                         R.id.delete -> {
                            delete(message)
@@ -66,24 +73,24 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
                             showKeyboard()
                             mEditText.imeOptions = EditorInfo.IME_ACTION_DONE
                             mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT)
+                            mEditText.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+                                if (!hasFocus) {
+                                    endEditMessage(mTextView, mEditText, message)
+                                }
+                            }
                             mEditText.setOnEditorActionListener { v, actionId, event ->
                                 return@setOnEditorActionListener when (actionId) {
                                     EditorInfo.IME_ACTION_DONE -> {
-                                        text=mEditText.text.toString()
-                                        mTextView.text=mEditText.text
-                                        mEditText.visibility=View.GONE
-                                        mTextView.visibility = View.VISIBLE
-                                        mEditText.setText("")
-                                        val upd_message = UserMessage(message.userId, text)
-                                        upd_message.id= message.id
-                                        update(upd_message)
-                                        closeKeyboard()
+                                       endEditMessage(mTextView, mEditText, message)
                                         true
                                     }
                                     else -> false
                                 }
-                            }
 
+                            }
+                            if (!mEditText.hasFocus()){
+                                endEditMessage(mTextView, mEditText, message)
+                            }
                             return true
                         }
                         R.id.close -> {
@@ -128,9 +135,22 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
         return allMessages
     }
 
+    fun endEditMessage(mTextView: TextView, mEditText: EditText,message: UserMessage){
+        var text: String = mTextView.text.toString()
+        text=mEditText.text.toString()
+        mTextView.text=mEditText.text
+        mEditText.visibility=View.GONE
+        mTextView.visibility = View.VISIBLE
+        mEditText.setText("")
+        val upd_message = UserMessage(message.userId, text)
+        upd_message.id= message.id
+        update(upd_message)
+        closeKeyboard()
+    }
+
     fun addNewMessage(message: String, userId: Int){
         if(message.isEmpty()){
-            Toast.makeText(context, "Введите сообщение", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Введите сообщение", Toast.LENGTH_LONG).show()
             return
         }else {
             var userMessage = UserMessage(userId, message)
