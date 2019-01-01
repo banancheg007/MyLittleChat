@@ -130,14 +130,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,View.OnFocusChang
                 val editTextMes = editText.text.toString()
                 val checkedId = radioGroup.checkedRadioButtonId
                 if (checkedId == R.id.radioBtnUserOne) {
-                    val userMessage = UserMessage(0, editTextMes)
+                    val userMessage = UserMessage(1, editTextMes)
 
                     //myAdapter.addUserMessage(userMessage)
                     userMessageViewModel!!.insert(userMessage)
 
                 }
                 if (checkedId == R.id.radioBtnUserTwo) {
-                    val userMessage = UserMessage(1, editTextMes)
+                    val userMessage = UserMessage(2, editTextMes)
                     //myAdapter.addUserMessage(userMessage)
                     userMessageViewModel!!.insert(userMessage)
 
