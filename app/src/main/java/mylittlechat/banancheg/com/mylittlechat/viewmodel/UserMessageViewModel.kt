@@ -2,7 +2,6 @@ package mylittlechat.banancheg.com.mylittlechat.viewmodel
 
 import android.app.Application
 import android.content.Context
-import android.provider.SyncStateContract.Helpers.update
 import android.text.InputType
 import android.view.MenuItem
 import android.view.View
@@ -12,12 +11,9 @@ import android.widget.EditText
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.LiveData
-import kotlinx.android.synthetic.main.activity_main.*
 import mylittlechat.banancheg.com.mylittlechat.MyAdapter
 import mylittlechat.banancheg.com.mylittlechat.R
-import mylittlechat.banancheg.com.mylittlechat.R.id.editText
 import mylittlechat.banancheg.com.mylittlechat.UserMessage
 
 import mylittlechat.banancheg.com.mylittlechat.repository.UserMessageRepository
@@ -27,11 +23,11 @@ import android.view.View.OnFocusChangeListener
 
 
 
-class UserMessageViewModel(application: Application) : BaseViewModel(application) {
+class UserMessageViewModel(application: Application) : BaseViewModel(application), MyAdapter.OnMessageClickListener {
 
     private val repository: UserMessageRepository = UserMessageRepository(application)
     private var allMessages: LiveData<List<UserMessage>>
-    var myAdapter: MyAdapter = MyAdapter()
+    val myAdapter: MyAdapter by lazy { MyAdapter(this) }
     private lateinit var mTextView: TextView
     private lateinit var mEditText: EditText
 
@@ -40,13 +36,12 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
 
     init {
         allMessages = repository.getAllMessages()
-        myAdapter.setOnItenClickListener(object : MyAdapter.OnItemClickListener {
-            override fun onItemClick(message: UserMessage, view: View) {
-                view.requestFocus()
-                showPopupMenu(view, message)
-            }
-        })
         context = application.baseContext
+    }
+
+    override fun onMessageClicked(message: UserMessage, view: View) {
+        view.requestFocus()
+        showPopupMenu(view, message)
     }
 
     private fun showPopupMenu(view: View, message: UserMessage) {
@@ -55,10 +50,9 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
         popupMenu
             .setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
                 override fun onMenuItemClick(item: MenuItem): Boolean {
-                    //view.requestFocus()
                     when (item.itemId) {
                         R.id.delete -> {
-                           delete(message)
+                           repository.delete(message)
                             return true
                         }
                         R.id.edit -> {
@@ -118,17 +112,7 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
     }
 
-    fun insert(note: UserMessage) {
-        repository.insert(note)
-    }
 
-    fun update(note: UserMessage) {
-        repository.update(note)
-    }
-
-    fun delete(note: UserMessage) {
-        repository.delete(note)
-    }
 
 
     fun getAllMessages(): LiveData<List<UserMessage>> {
@@ -144,7 +128,7 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
         mEditText.setText("")
         val upd_message = UserMessage(message.userId, text)
         upd_message.id= message.id
-        update(upd_message)
+        repository.update(upd_message)
         closeKeyboard()
     }
 
@@ -162,7 +146,20 @@ class UserMessageViewModel(application: Application) : BaseViewModel(application
                     userMessage.userId = 2
                 }
             }
-            insert(userMessage)
+            repository.insert(userMessage)
         }
+    }
+
+    fun updateMessageCount() {
+        var messagesUser1 = 0
+        var messagesUser2 = 0
+        myAdapter.messagesList.forEach { i ->
+            when (i.userId) {
+                1 -> messagesUser1++
+                2-> messagesUser2++
+            }
+        }
+        myAdapter.userOneCount = messagesUser1
+        myAdapter.userTwoCount = messagesUser2
     }
 }

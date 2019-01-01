@@ -8,22 +8,19 @@ import java.util.*
 import androidx.recyclerview.widget.RecyclerView
 
 
-class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
-    private var listener: OnItemClickListener? = null
+class MyAdapter (private val callback: OnMessageClickListener): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     companion object {
         const val TYPE_HEADER = 0
         const val TYPE_FIRST_USER = 1
         const val TYPE_SECOND_USER = 2
     }
-
-    private var messagesList: MutableList<UserMessage> = ArrayList()
-
-    interface OnItemClickListener {
-        fun onItemClick(message: UserMessage, view: View)
+    interface OnMessageClickListener {
+        fun onMessageClicked(message: UserMessage, view: View)
     }
-    fun setOnItenClickListener(listener: OnItemClickListener) {
-        this.listener = listener
-    }
+
+    var messagesList: MutableList<UserMessage> = ArrayList()
+    var userOneCount: Int = 0
+    var userTwoCount: Int = 0
 
     override fun onCreateViewHolder(parent  : ViewGroup, viewType: Int): RecyclerView.ViewHolder{
         when(viewType){
@@ -73,34 +70,25 @@ class MyAdapter (): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
         private val txtMessage: TextView = view.findViewById(R.id.messageTextView)
         fun bind() {
-            var messagesUser1 = 0
-            var messagesUser2 = 0
-            messagesList.forEach { i ->
-                when (i.userId) {
-                    1 -> messagesUser1++
-                    2-> messagesUser2++
-                }
-            }
-            txtMessage.text = "User1 : $messagesUser1   User2 : $messagesUser2"
+            txtMessage.text = "User1 : $userOneCount   User2 : $userTwoCount"
         }
     }
 
 
-    open inner class UserMessageViewHolder(view: View) : RecyclerView.ViewHolder(view){
+    open inner class UserMessageViewHolder(view: View) : RecyclerView.ViewHolder(view),View.OnLongClickListener{
         private val messageText: TextView
 
 
 
         init {
             messageText = itemView.findViewById(R.id.messageTextView)
+            view.setOnLongClickListener(this)
+        }
 
-            view.setOnClickListener {
-                val position = adapterPosition
-                if (listener != null && position != RecyclerView.NO_POSITION) {
-                    listener!!.onItemClick(messagesList[position-1], view)
-                }
 
-            }
+        override fun onLongClick(view: View): Boolean {
+            callback.onMessageClicked(messagesList[position-1], view)
+            return true
         }
 
 
